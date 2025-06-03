@@ -1,40 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { Tabs, Tab, Box, Container, Typography } from '@mui/material';
+import FormularioCadastro from './components/FormularioCadastro';
+import ListaUsuarios from './components/ListaUsuarios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [abaAtual, setAbaAtual] = useState(0);
+  const [usuarios, setUsuarios] = useState(() => {
+    const salvos = localStorage.getItem('usuarios');
+    return salvos ? JSON.parse(salvos) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+  }, [usuarios]);
+
+  const handleChange = (event, newValue) => {
+    setAbaAtual(newValue);
+  };
+
+  const adicionarUsuario = (usuario) => {
+    setUsuarios([...usuarios, usuario]);
+  };
 
   return (
+    <Container>
+      <Typography variant="h4" gutterBottom>Cadastro de Usuários</Typography>
+      <Tabs value={abaAtual} onChange={handleChange}>
+        <Tab label="Cadastrar" />
+        <Tab label="Ver Cadastrados" />
+      </Tabs>
+      <Box mt={2}>
+        {abaAtual === 0 && <FormularioCadastro onAdicionarUsuario={adicionarUsuario} />}
+        {abaAtual === 1 && <ListaUsuarios usuarios={usuarios} />}
+      </Box>
+    </Container>
+  );
+};
 
-
-
-
-    
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
+export default App;
